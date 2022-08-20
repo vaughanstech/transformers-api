@@ -11,17 +11,17 @@ datasource db {
 }
 
 model Autobots {
-  id                    Int      @id @default(autoincrement())
-  name                  String
+  id                    Int    @id @default(autoincrement())
+  name                  String @unique
   role                  String
-  first_appearance_date DateTime
+  first_appearance_date Int
   first_appearance      String
 }
 
 model Decepticons {
-  id                    Int      @id @default(autoincrement())
-  name                  String
+  id                    Int    @id @default(autoincrement())
+  name                  String @unique
   role                  String
-  first_appearance_date DateTime
+  first_appearance_date Int
   first_appearance      String
 }

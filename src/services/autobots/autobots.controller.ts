@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Autobots } from '@prisma/client';
 import { AutobotsService } from './autobots.service';
 
-@Controller()
+@Controller('autobots')
 export class AutobotsController {
   constructor(private readonly autobotService: AutobotsService) {}
 
@@ -11,7 +11,7 @@ export class AutobotsController {
     @Param('id') id: number,
     @Param('name') name: string,
     @Param('role') role: string,
-    @Param('first_appearance_date') first_appearance_date: Date,
+    @Param('first_appearance_date') first_appearance_date: number,
     @Param('first_appearance') first_appearance: string,
   ) {
     return this.autobotService.autobot({
@@ -29,7 +29,7 @@ export class AutobotsController {
     postData: {
       name: string;
       role?: string;
-      first_appearance_date?: Date;
+      first_appearance_date?: number;
       first_appearance: string;
     },
   ): Promise<Autobots> {
