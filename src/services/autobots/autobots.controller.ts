@@ -16,14 +16,12 @@ export class AutobotsController {
 
   @Get('/')
   async getAutobot(
-    @Param('id') id: number,
     @Param('name') name: string,
     @Param('role') role: string,
     @Param('first_appearance_date') first_appearance_date: number,
     @Param('first_appearance') first_appearance: string,
   ) {
     return this.autobotService.autobot({
-      id,
       name,
       role,
       first_appearance_date,
@@ -61,12 +59,11 @@ export class AutobotsController {
     });
   }
 
-  @Put('/')
+  @Put('/:name')
   async updateAutobot(
-    @Param('id') id: string,
+    @Param('name') name: string,
     @Body()
     updateData: {
-      name: string;
       role: string;
       transforms_into?: string;
       description: string;
@@ -74,12 +71,11 @@ export class AutobotsController {
       first_appearance: string;
     },
   ): Promise<Autobots> {
-    const { name, role, transforms_into, description, first_appearance } =
-      updateData;
+    const { role, transforms_into, description, first_appearance } = updateData;
     const first_appearance_date = Number(updateData.first_appearance_date);
 
     return this.autobotService.updateAutobot({
-      where: { id: Number(id) },
+      where: { name: String(name) },
       data: {
         name,
         role,
@@ -91,10 +87,10 @@ export class AutobotsController {
     });
   }
 
-  @Delete('/:id')
-  async deleteAutobot(@Param('id') id: string): Promise<Autobots> {
+  @Delete('/:name')
+  async deleteAutobot(@Param('name') name: string): Promise<Autobots> {
     return this.autobotService.deleteAutobot({
-      id: Number(id),
+      name: String(name),
     });
   }
 }

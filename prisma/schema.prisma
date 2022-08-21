@@ -11,7 +11,6 @@ datasource db {
 }
 
 model Autobots {
-  id                    Int    @id @default(autoincrement())
   name                  String @unique
   role                  String
   transforms_into       String
@@ -21,7 +20,6 @@ model Autobots {
 }
 
 model Decepticons {
-  id                    Int    @id @default(autoincrement())
   name                  String @unique
   role                  String
   transforms_into       String
@@ -31,7 +29,6 @@ model Decepticons {
 }
 
 model Dinobots {
-  id                    Int    @id @default(autoincrement())
   name                  String @unique
   transform_into        String
   description           String
@@ -39,14 +36,12 @@ model Dinobots {
 }
 
 model Movies {
-  id           Int    @id @default(autoincrement())
   name         String @unique
   description  String
   release_date String
 }
 
 model Games {
-  id           Int      @id @default(autoincrement())
   name         String   @unique
   description  String
   release_date String

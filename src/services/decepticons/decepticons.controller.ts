@@ -16,14 +16,12 @@ export class DecepticonsController {
 
   @Get('/')
   async getDecepticon(
-    @Param('id') id: number,
     @Param('name') name: string,
     @Param('role') role: string,
     @Param('first_appearance_date') first_appearance_date: number,
     @Param('first_appearance') first_appearance: string,
   ) {
     return this.decepticonsService.decepticon({
-      id,
       name,
       role,
       first_appearance_date,
@@ -61,12 +59,11 @@ export class DecepticonsController {
     });
   }
 
-  @Put('/:id')
+  @Put('/:name')
   async updateDecepticon(
-    @Param('id') id: string,
+    @Param('name') name: string,
     @Body()
     updateData: {
-      name: string;
       role: string;
       transforms_into?: string;
       description: string;
@@ -74,12 +71,11 @@ export class DecepticonsController {
       first_appearance: string;
     },
   ): Promise<Decepticons> {
-    const { name, role, transforms_into, description, first_appearance } =
-      updateData;
+    const { role, transforms_into, description, first_appearance } = updateData;
     const first_appearance_date = Number(updateData.first_appearance_date);
 
     return this.decepticonsService.updateDecepticon({
-      where: { id: Number(id) },
+      where: { name: String(name) },
       data: {
         name,
         role,
@@ -91,10 +87,10 @@ export class DecepticonsController {
     });
   }
 
-  @Delete('/:id')
-  async deleteDecepticon(@Param('id') id: string): Promise<Decepticons> {
+  @Delete('/:name')
+  async deleteDecepticon(@Param('name') name: string): Promise<Decepticons> {
     return this.decepticonsService.deleteDecepticon({
-      id: Number(id),
+      name: String(name),
     });
   }
 }
