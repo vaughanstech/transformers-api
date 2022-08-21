@@ -16,10 +16,10 @@ export class DecepticonsController {
 
   @Get('/')
   async getDecepticon(
-    @Param('name') name: string,
-    @Param('role') role: string,
-    @Param('first_appearance_date') first_appearance_date: number,
-    @Param('first_appearance') first_appearance: string,
+    @Param('name') name?: string,
+    @Param('role') role?: string,
+    @Param('first_appearance_date') first_appearance_date?: number,
+    @Param('first_appearance') first_appearance?: string,
   ) {
     return this.decepticonsService.decepticon({
       name,

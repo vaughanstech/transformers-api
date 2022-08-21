@@ -16,10 +16,10 @@ export class AutobotsController {
 
   @Get('/')
   async getAutobot(
-    @Param('name') name: string,
-    @Param('role') role: string,
-    @Param('first_appearance_date') first_appearance_date: number,
-    @Param('first_appearance') first_appearance: string,
+    @Param('name') name?: string,
+    @Param('role') role?: string,
+    @Param('first_appearance_date') first_appearance_date?: number,
+    @Param('first_appearance') first_appearance?: string,
   ) {
     return this.autobotService.autobot({
       name,
