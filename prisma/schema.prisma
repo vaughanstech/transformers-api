@@ -14,6 +14,8 @@ model Autobots {
   id                    Int    @id @default(autoincrement())
   name                  String @unique
   role                  String
+  transforms_into       String
+  description           String
   first_appearance_date Int
   first_appearance      String
 }
@@ -22,6 +24,31 @@ model Decepticons {
   id                    Int    @id @default(autoincrement())
   name                  String @unique
   role                  String
+  transforms_into       String
+  description           String
   first_appearance_date Int
   first_appearance      String
+}
+
+model Dinobots {
+  id                    Int    @id @default(autoincrement())
+  name                  String @unique
+  transform_into        String
+  description           String
+  Autobot_or_Decepticon String
+}
+
+model Movies {
+  id           Int    @id @default(autoincrement())
+  name         String @unique
+  description  String
+  release_date String
+}
+
+model Games {
+  id           Int      @id @default(autoincrement())
+  name         String   @unique
+  description  String
+  release_date String
+  platforms    String[]
 }

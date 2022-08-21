@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { Decepticons } from '@prisma/client';
 import { DecepticonsService } from './decepticons.service';
 
@@ -29,16 +37,64 @@ export class DecepticonsController {
     postData: {
       name: string;
       role?: string;
+      transforms_into?: string;
+      description: string;
       first_appearance_date?: number;
       first_appearance: string;
     },
   ): Promise<Decepticons> {
-    const { name, role, first_appearance_date, first_appearance } = postData;
+    const {
+      name,
+      role,
+      transforms_into,
+      description,
+      first_appearance_date,
+      first_appearance,
+    } = postData;
     return this.decepticonsService.createDecepticon({
       name,
       role,
+      transforms_into,
+      description,
       first_appearance_date,
       first_appearance,
+    });
+  }
+
+  @Put('/:id')
+  async updateDecepticon(
+    @Param('id') id: string,
+    @Body()
+    updateData: {
+      name: string;
+      role: string;
+      transforms_into?: string;
+      description: string;
+      first_appearance_date: number;
+      first_appearance: string;
+    },
+  ): Promise<Decepticons> {
+    const { name, role, transforms_into, description, first_appearance } =
+      updateData;
+    const first_appearance_date = Number(updateData.first_appearance_date);
+
+    return this.decepticonsService.updateDecepticon({
+      where: { id: Number(id) },
+      data: {
+        name,
+        role,
+        transforms_into,
+        description,
+        first_appearance_date,
+        first_appearance,
+      },
+    });
+  }
+
+  @Delete('/:id')
+  async deleteDecepticon(@Param('id') id: string): Promise<Decepticons> {
+    return this.decepticonsService.deleteDecepticon({
+      id: Number(id),
     });
   }
 }
