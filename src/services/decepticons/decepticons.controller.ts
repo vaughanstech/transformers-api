@@ -6,7 +6,9 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Decepticons } from '@prisma/client';
 import { DecepticonsService } from './decepticons.service';
 
@@ -30,6 +32,7 @@ export class DecepticonsController {
   }
 
   @Post('/')
+  @UseGuards(AuthGuard('basic'))
   async postDecepticon(
     @Body()
     postData: {
@@ -60,6 +63,7 @@ export class DecepticonsController {
   }
 
   @Put('/:name')
+  @UseGuards(AuthGuard('basic'))
   async updateDecepticon(
     @Param('name') name: string,
     @Body()
@@ -88,6 +92,7 @@ export class DecepticonsController {
   }
 
   @Delete('/:name')
+  @UseGuards(AuthGuard('basic'))
   async deleteDecepticon(@Param('name') name: string): Promise<Decepticons> {
     return this.decepticonsService.deleteDecepticon({
       name: String(name),

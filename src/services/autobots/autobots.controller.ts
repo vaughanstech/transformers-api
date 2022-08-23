@@ -7,7 +7,9 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Autobots } from '@prisma/client';
 import { AutobotsService } from './autobots.service';
 
@@ -35,6 +37,7 @@ export class AutobotsController {
   }
 
   @Post('/')
+  @UseGuards(AuthGuard('basic'))
   async postAutobot(
     @Body()
     postData: {
@@ -65,6 +68,7 @@ export class AutobotsController {
   }
 
   @Put('/:name')
+  @UseGuards(AuthGuard('basic'))
   async updateAutobot(
     @Param('name') name: string,
     @Body()
@@ -93,6 +97,7 @@ export class AutobotsController {
   }
 
   @Delete('/:name')
+  @UseGuards(AuthGuard('basic'))
   async deleteAutobot(@Param('name') name: string): Promise<Autobots> {
     return this.autobotService.deleteAutobot({
       name: String(name),
