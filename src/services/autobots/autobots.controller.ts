@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Autobots } from '@prisma/client';
-import { AutobotsGetSchema } from './autobots.dto';
+import { AutobotsGetSchema, AutobotsPutSchema } from './autobots.dto';
 import { AutobotsService } from './autobots.service';
 
 @ApiTags('Autobots')
@@ -155,6 +155,28 @@ export class AutobotsController {
 
   @Put('/:name')
   @ApiBasicAuth()
+  @ApiBody({
+    description:
+      'Pass the following JSON fields to update the information about an Autobot in the database',
+    isArray: true,
+    type: AutobotsPutSchema,
+  })
+  @ApiResponse({ status: 200, description: 'Autobot updated successfully' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid parameters',
+    schema: { example: 'Invalid parameters' },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'User not authorized',
+    schema: { example: 'Unauthorized' },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'This method is not allowed',
+    schema: { example: 'Method not supported' },
+  })
   @UseGuards(AuthGuard('basic'))
   async updateAutobot(
     @Param('name') name: string,
@@ -185,6 +207,22 @@ export class AutobotsController {
 
   @Delete('/:name')
   @ApiBasicAuth()
+  @ApiResponse({ status: 200, description: 'Autobot successfully deleted' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid parameters',
+    schema: { example: 'Invalid parameters' },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'User not authorized',
+    schema: { example: 'Unauthorized' },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'This method is not allowed',
+    schema: { example: 'Method not supported' },
+  })
   @UseGuards(AuthGuard('basic'))
   async deleteAutobot(@Param('name') name: string): Promise<Autobots> {
     return this.autobotService.deleteAutobot({
