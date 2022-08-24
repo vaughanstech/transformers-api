@@ -9,9 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
 import { Decepticons } from '@prisma/client';
 import { DecepticonsService } from './decepticons.service';
 
+@ApiTags('Decepticons')
 @Controller('decepticons')
 export class DecepticonsController {
   constructor(private readonly decepticonsService: DecepticonsService) {}
@@ -32,6 +34,7 @@ export class DecepticonsController {
   }
 
   @Post('/')
+  @ApiBasicAuth()
   @UseGuards(AuthGuard('basic'))
   async postDecepticon(
     @Body()
@@ -63,6 +66,7 @@ export class DecepticonsController {
   }
 
   @Put('/:name')
+  @ApiBasicAuth()
   @UseGuards(AuthGuard('basic'))
   async updateDecepticon(
     @Param('name') name: string,
@@ -92,6 +96,7 @@ export class DecepticonsController {
   }
 
   @Delete('/:name')
+  @ApiBasicAuth()
   @UseGuards(AuthGuard('basic'))
   async deleteDecepticon(@Param('name') name: string): Promise<Decepticons> {
     return this.decepticonsService.deleteDecepticon({
