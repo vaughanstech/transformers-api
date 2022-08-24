@@ -1,6 +1,5 @@
 export class AutobotsGetSchema {
   name: string = 'Optimus Prime';
-
   role: string = 'Leader';
   transforms_into: string = 'flat nose cab with a trailer';
   description: string =

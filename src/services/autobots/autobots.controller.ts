@@ -10,7 +10,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBasicAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBasicAuth,
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Autobots } from '@prisma/client';
 import { AutobotsGetSchema } from './autobots.dto';
 import { AutobotsService } from './autobots.service';
@@ -96,6 +102,27 @@ export class AutobotsController {
 
   @Post('/')
   @ApiBasicAuth()
+  @ApiBody({
+    description: 'The Autobot will be stored in the transformers database',
+    isArray: true,
+    type: AutobotsGetSchema,
+  })
+  @ApiResponse({ status: 201, description: 'Autobot stored successfuly' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid parameters',
+    schema: { example: 'Invalid Parameters' },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'User is not authorized',
+    schema: { example: 'Unauthorized' },
+  })
+  @ApiResponse({
+    status: 405,
+    description: 'This method is not allowed',
+    schema: { example: 'Method is not supported' },
+  })
   @UseGuards(AuthGuard('basic'))
   async postAutobot(
     @Body()
