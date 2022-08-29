@@ -104,7 +104,7 @@ export class AutobotsController {
   @ApiBasicAuth()
   @ApiBody({
     description: 'The Autobot will be stored in the transformers database',
-    isArray: true,
+    isArray: false,
     type: AutobotsGetSchema,
   })
   @ApiResponse({ status: 201, description: 'Autobot stored successfully' })

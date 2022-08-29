@@ -16,6 +16,7 @@ async function bootstrap() {
     )
     .setVersion('beta')
     .addTag('Transformers')
+    .addBasicAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   const customOptions: SwaggerCustomOptions = {
