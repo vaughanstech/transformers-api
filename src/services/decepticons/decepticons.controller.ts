@@ -6,11 +6,13 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBasicAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBasicAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Decepticons } from '@prisma/client';
+import { DecepticonsGetSchema } from './decepticons.dto';
 import { DecepticonsService } from './decepticons.service';
 
 @ApiTags('Decepticons')
@@ -19,16 +21,75 @@ export class DecepticonsController {
   constructor(private readonly decepticonsService: DecepticonsService) {}
 
   @Get('/')
+  @ApiResponse({
+    status: 200,
+    description: 'List of Decepticons',
+    isArray: true,
+    type: DecepticonsGetSchema,
+  })
+  @ApiResponse({
+    status: 405,
+    description: 'This method is not allowed',
+    schema: { example: 'Method not supported' },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Internal server error',
+    schema: { example: 'Internal Server Error' },
+  })
+  @ApiQuery({
+    name: 'name',
+    example: 'Megatron',
+    description: 'The name of the Decepticon',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'role',
+    example: 'Leader',
+    description: 'Position the Decepticon held in the group',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'transforms_into',
+    example: 'tank',
+    description:
+      'What the Decepticon transforms into (its main mode of transportation)',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'description',
+    example:
+      'Megatron hatels all forms of life, finding them all inferior and dusgusting to his mechanical form. He cares for nothing but himself and his quest for power, and has repeatedly left his fellow decepticons to fend for themselves when damaged or captured by the Autobots',
+    description: 'Description of the Decepticon',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'first_appearance_date',
+    example: 1986,
+    description: 'Date when the Decepticon first appeared',
+    required: false,
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'first_appearance',
+    example: 'The Transformers: Battle to Save the Earth',
+    description: 'Movie/TV Series/Game where the Decepticon first appeared',
+    required: false,
+  })
   async getDecepticon(
-    @Param('name') name?: string,
-    @Param('role') role?: string,
-    @Param('first_appearance_date') first_appearance_date?: number,
-    @Param('first_appearance') first_appearance?: string,
+    @Query('name') name: string,
+    @Query('role') role: string,
+    @Query('transforms_into') transforms_into: string,
+    @Query('description') description: string,
+    @Query('first_appearance_date') first_appearance_date: string,
+    @Query('first_appearance') first_appearance: string,
   ) {
     return this.decepticonsService.decepticon({
       name,
       role,
-      first_appearance_date,
+      transforms_into,
+      description,
+      first_appearance_date: Number(first_appearance_date),
       first_appearance,
     });
   }
