@@ -107,7 +107,7 @@ export class AutobotsController {
     isArray: true,
     type: AutobotsGetSchema,
   })
-  @ApiResponse({ status: 201, description: 'Autobot stored successfuly' })
+  @ApiResponse({ status: 201, description: 'Autobot stored successfully' })
   @ApiResponse({
     status: 400,
     description: 'Invalid parameters',

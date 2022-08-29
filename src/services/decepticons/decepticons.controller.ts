@@ -10,9 +10,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBasicAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBasicAuth,
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Decepticons } from '@prisma/client';
-import { DecepticonsGetSchema } from './decepticons.dto';
+import { DecepticonPutSchema, DecepticonsGetSchema } from './decepticons.dto';
 import { DecepticonsService } from './decepticons.service';
 
 @ApiTags('Decepticons')
@@ -96,6 +102,27 @@ export class DecepticonsController {
 
   @Post('/')
   @ApiBasicAuth()
+  @ApiBody({
+    description: 'The Decepticon will be stored in the transformers database',
+    isArray: true,
+    type: DecepticonsGetSchema,
+  })
+  @ApiResponse({ status: 201, description: 'Decepticon stored successfully' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid parameters',
+    schema: { example: 'Invalid Parameters' },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'User is not authorized',
+    schema: { example: 'Unauthorized' },
+  })
+  @ApiResponse({
+    status: 405,
+    description: 'This method is not allowed',
+    schema: { example: 'Method is not supported' },
+  })
   @UseGuards(AuthGuard('basic'))
   async postDecepticon(
     @Body()
@@ -128,6 +155,28 @@ export class DecepticonsController {
 
   @Put('/:name')
   @ApiBasicAuth()
+  @ApiBody({
+    description:
+      'Pass the following JSON fields to update the information about a Decepticon in the database',
+    isArray: true,
+    type: DecepticonPutSchema,
+  })
+  @ApiResponse({ status: 200, description: 'Decepticon updated successfully' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid parameters',
+    schema: { example: 'Invalid parameters' },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'User not authorized',
+    schema: { example: 'Unauthorized' },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'This method is not allowed',
+    schema: { example: 'Method not supported' },
+  })
   @UseGuards(AuthGuard('basic'))
   async updateDecepticon(
     @Param('name') name: string,
@@ -158,6 +207,22 @@ export class DecepticonsController {
 
   @Delete('/:name')
   @ApiBasicAuth()
+  @ApiResponse({ status: 200, description: 'Decepticon successfully deleted' })
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid parameters',
+    schema: { example: 'Invalid parameters' },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'User not authorized',
+    schema: { example: 'Unauthorized' },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'This method is not allowed',
+    schema: { example: 'Method not supported' },
+  })
   @UseGuards(AuthGuard('basic'))
   async deleteDecepticon(@Param('name') name: string): Promise<Decepticons> {
     return this.decepticonsService.deleteDecepticon({
