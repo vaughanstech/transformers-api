@@ -36,16 +36,16 @@ model Dinobots {
 }
 
 model Movies {
-  name         String   @unique
+  name         String @unique
   director     String
   description  String
-  release_date DateTime
+  release_date String
 }
 
 model Games {
   name         String   @unique
   description  String
-  release_date DateTime
-  Developers   String
+  release_date String
+  developers   String
   platforms    String[]
 }

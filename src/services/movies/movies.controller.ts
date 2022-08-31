@@ -72,7 +72,7 @@ export class MoviesController {
     @Query('name') name: string,
     @Query('director') director: string,
     @Query('description') description: string,
-    @Query('release_date') release_date: Date,
+    @Query('release_date') release_date: string,
   ) {
     return this.moviesService.Movie({
       name,
@@ -117,7 +117,7 @@ export class MoviesController {
       name: string;
       director: string;
       description: string;
-      release_date: Date;
+      release_date: string;
     },
   ): Promise<Movies> {
     const { name, director, description, release_date } = postData;
@@ -160,7 +160,7 @@ export class MoviesController {
     updatedData: {
       director: string;
       description: string;
-      release_date: Date;
+      release_date: string;
     },
   ): Promise<Movies> {
     const { director, description, release_date } = updatedData;
