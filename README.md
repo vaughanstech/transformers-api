@@ -49,5 +49,5 @@ $ npm run test:cov
 
 ## Stay in touch
 
-- Author - [Michael Vauhgan](https://vaughanstech.com)
+- Author - [Michael Vaughan](https://vaughanstech.com)
 - LinkedIn - [https://linkedin.com/michael-vaughan](https://www.linkedin.com/in/michael-vaughan-86267b1b6/)
