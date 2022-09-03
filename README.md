@@ -1,14 +1,23 @@
+<p align="center">
+    <img src="/pictures/Optimus-Prime-PNG-Clipart.png" />
+</p>
+<p align="center">Welcome to the Transformers API</p>
+
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The Transformers API is a backend project by Michael Vaughan. This project is built using the NestJS framework. The purpose of this project is to allow developers to experiment with an online datasource in their projects.
 
 ## Installation
+
+Install all dependencies in the project with the following command:
 
 ```bash
 $ npm install
 ```
 
 ## Running the app
+
+Get the app running with the following commands
 
 ```bash
 # development
@@ -20,6 +29,10 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## Accessing the Docs
+
+To access the docs for this API to test different endpoints in development go to [http://localhost:3000/api#/Transformers](http://localhost:3000/api#/Transformers)
 
 ## Test
 
@@ -34,16 +47,7 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+- Author - [Michael Vauhgan](https://vaughanstech.com)
+- LinkedIn - [https://linkedin.com/michael-vaughan](https://www.linkedin.com/in/michael-vaughan-86267b1b6/)
