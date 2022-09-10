@@ -18,6 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBasicAuth,
   ApiBody,
+  ApiExcludeEndpoint,
   ApiParam,
   ApiQuery,
   ApiResponse,
@@ -135,6 +136,39 @@ export class AutobotsController {
     }
   }
 
+  @Get('/:imagename')
+  @ApiResponse({
+    status: 200,
+    description: 'Image of the Autobot',
+    schema: { example: 'Success' },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found',
+    schema: { example: 'Image Not Found' },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Server Error',
+    schema: { example: 'Internal Server Error' },
+  })
+  @ApiParam({
+    name: 'imagename',
+    example: 'optimus_prime60504e9b-4417-4bcd-9db4-964e20e7f5dd.png',
+    description:
+      'Name of the image for the Autobot (Please use the image name from autobots GET request)',
+  })
+  findAutobotImage(
+    @Param('imagename') imagename,
+    @Res() res,
+  ): Observable<Object> {
+    return of(
+      res.sendFile(
+        join(process.cwd(), 'src/public/autobotImages/' + imagename),
+      ),
+    );
+  }
+
   @Post('/')
   @ApiBasicAuth()
   @ApiBody({
@@ -242,6 +276,7 @@ export class AutobotsController {
 
   @UseGuards(AuthGuard('basic'))
   @Post('/image')
+  @ApiExcludeEndpoint()
   @UseInterceptors(FileInterceptor('file', storage))
   // eslint-disable-next-line @typescript-eslint/ban-types
   uploadImage(
@@ -255,24 +290,6 @@ export class AutobotsController {
         image: file.filename,
       },
     });
-  }
-
-  @Get('/image/:imagename')
-  @ApiParam({
-    name: 'imagename',
-    example: 'optimus_prime60504e9b-4417-4bcd-9db4-964e20e7f5dd.png',
-    description:
-      'Name of the image for the Autobot (Please use the image name from autobot GET request)',
-  })
-  findAutobotImage(
-    @Param('imagename') imagename,
-    @Res() res,
-  ): Observable<Object> {
-    return of(
-      res.sendFile(
-        join(process.cwd(), 'src/public/autobotImages/' + imagename),
-      ),
-    );
   }
 
   @Delete('/:name')
