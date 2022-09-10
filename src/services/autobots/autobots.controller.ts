@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import {
   Body,
   Controller,
@@ -7,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -16,6 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBasicAuth,
   ApiBody,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -26,6 +29,8 @@ import path = require('path');
 import { AutobotsGetSchema, AutobotsPutSchema } from './autobots.dto';
 import { AutobotsService } from './autobots.service';
 import { v4 as uuidv4 } from 'uuid';
+import { Observable, of } from 'rxjs';
+import { join } from 'path';
 
 export const storage = {
   storage: diskStorage({
@@ -250,6 +255,24 @@ export class AutobotsController {
         image: file.filename,
       },
     });
+  }
+
+  @Get('/image/:imagename')
+  @ApiParam({
+    name: 'imagename',
+    example: 'optimus_prime60504e9b-4417-4bcd-9db4-964e20e7f5dd.png',
+    description:
+      'Name of the image for the Autobot (Please use the image name from autobot GET request)',
+  })
+  findAutobotImage(
+    @Param('imagename') imagename,
+    @Res() res,
+  ): Observable<Object> {
+    return of(
+      res.sendFile(
+        join(process.cwd(), 'src/public/autobotImages/' + imagename),
+      ),
+    );
   }
 
   @Delete('/:name')
