@@ -7,9 +7,12 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBasicAuth,
   ApiBody,
@@ -18,8 +21,24 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Autobots } from '@prisma/client';
+import { diskStorage } from 'multer';
+import path = require('path');
 import { AutobotsGetSchema, AutobotsPutSchema } from './autobots.dto';
 import { AutobotsService } from './autobots.service';
+import { v4 as uuidv4 } from 'uuid';
+
+export const storage = {
+  storage: diskStorage({
+    destination: './src/public/autobotImages/',
+    filename: (req, file, cb) => {
+      const filename: string =
+        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`);
+    },
+  }),
+};
 
 @ApiTags('Autobots')
 @Controller('autobots')
@@ -87,17 +106,28 @@ export class AutobotsController {
     @Query('role') role: string,
     @Query('transforms_into') transforms_into: string,
     @Query('description') description: string,
-    @Query('first_appearance_date') first_appearance_date: string,
+    @Query('first_appearance_date') first_appearance_date: any,
     @Query('first_appearance') first_appearance: string,
   ) {
-    return this.autobotService.autobot({
-      name,
-      role,
-      transforms_into,
-      description,
-      first_appearance_date: Number(first_appearance_date),
-      first_appearance,
-    });
+    if (first_appearance_date == String(first_appearance_date)) {
+      return this.autobotService.autobot({
+        name,
+        role,
+        transforms_into,
+        description,
+        first_appearance_date: Number(first_appearance_date),
+        first_appearance,
+      });
+    } else {
+      return this.autobotService.autobot({
+        name,
+        role,
+        transforms_into,
+        description,
+        first_appearance_date,
+        first_appearance,
+      });
+    }
   }
 
   @Post('/')
@@ -201,6 +231,23 @@ export class AutobotsController {
         description,
         first_appearance_date,
         first_appearance,
+      },
+    });
+  }
+
+  @UseGuards(AuthGuard('basic'))
+  @Post('/image')
+  @UseInterceptors(FileInterceptor('file', storage))
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  uploadImage(
+    @Query('name') name: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Autobots> {
+    console.log(file);
+    return this.autobotService.updateAutobot({
+      where: { name: String(name) },
+      data: {
+        image: file.filename,
       },
     });
   }

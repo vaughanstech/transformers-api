@@ -11,35 +11,39 @@ datasource db {
 }
 
 model Autobots {
-  name                  String @unique
+  name                  String  @unique
   role                  String
   transforms_into       String
   description           String
   first_appearance_date Int
   first_appearance      String
+  image                 String?
 }
 
 model Decepticons {
-  name                  String @unique
+  name                  String  @unique
   role                  String
   transforms_into       String
   description           String
   first_appearance_date Int
   first_appearance      String
+  image                 String?
 }
 
 model Dinobots {
-  name                  String @unique
+  name                  String  @unique
   transform_into        String
   description           String
   Autobot_or_Decepticon String
+  image                 String?
 }
 
 model Movies {
-  name         String @unique
+  name         String  @unique
   director     String
   description  String
   release_date String
+  image        String?
 }
 
 model Games {
@@ -48,4 +52,5 @@ model Games {
   release_date String
   developers   String
   platforms    String[]
+  image        String?
 }
