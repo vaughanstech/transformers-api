@@ -18,6 +18,7 @@ import {
   ApiBasicAuth,
   ApiBody,
   ApiExcludeEndpoint,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -107,6 +108,27 @@ export class MoviesController {
   }
 
   @Get(':/imagename')
+  @ApiResponse({
+    status: 200,
+    description: 'Image of the Movie Poster',
+    schema: { example: 'Success' },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found',
+    schema: { example: 'Image Not Found' },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Server Error',
+    schema: { example: 'Internal Server Error' },
+  })
+  @ApiParam({
+    name: 'imagename',
+    example: '',
+    description:
+      'Name of the image for the Movie Poster (Please use the image name from movies GET request)',
+  })
   findMovieImage(
     @Param('imagename') imagename,
     @Res() res,
