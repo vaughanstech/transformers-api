@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import {
   Body,
   Controller,
@@ -7,19 +8,42 @@ import {
   Post,
   Put,
   Query,
+  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBasicAuth,
   ApiBody,
+  ApiExcludeEndpoint,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Movies } from '@prisma/client';
+import { diskStorage } from 'multer';
 import { MoviesGetSchema, MoviesPutSchema } from './movies.dto';
 import { MoviesService } from './movies.service';
+import { v4 as uuidv4 } from 'uuid';
+import path = require('path');
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Observable, of } from 'rxjs';
+import { join } from 'path';
+
+const storage = {
+  storage: diskStorage({
+    destination: './src/public/movieImages',
+    filename: (req, file, cb) => {
+      const filename: string =
+        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`);
+    },
+  }),
+};
 
 @ApiTags('Movies')
 @Controller('movies')
@@ -82,6 +106,16 @@ export class MoviesController {
     });
   }
 
+  @Get(':/imagename')
+  findMovieImage(
+    @Param('imagename') imagename,
+    @Res() res,
+  ): Observable<Object> {
+    return of(
+      res.sendFile(join(process.cwd(), 'src/public/movies/Images' + imagename)),
+    );
+  }
+
   @Post('/')
   @ApiBasicAuth()
   @ApiBody({
@@ -126,6 +160,22 @@ export class MoviesController {
       director,
       description,
       release_date,
+    });
+  }
+
+  @UseGuards(AuthGuard('basic'))
+  @Post('/image')
+  @ApiExcludeEndpoint()
+  @UseInterceptors(FileInterceptor('file', storage))
+  uploadImage(
+    @Query('name') name: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Movies> {
+    return this.moviesService.updateMovie({
+      where: { name: String(name) },
+      data: {
+        image: file.filename,
+      },
     });
   }
 

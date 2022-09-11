@@ -226,7 +226,6 @@ export class AutobotsController {
   @Post('/image')
   @ApiExcludeEndpoint()
   @UseInterceptors(FileInterceptor('file', storage))
-  // eslint-disable-next-line @typescript-eslint/ban-types
   uploadImage(
     @Query('name') name: string,
     @UploadedFile() file: Express.Multer.File,
