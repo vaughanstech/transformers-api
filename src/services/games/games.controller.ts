@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import {
   Body,
   Controller,
@@ -7,19 +8,43 @@ import {
   Post,
   Put,
   Query,
+  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBasicAuth,
   ApiBody,
+  ApiExcludeEndpoint,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Games } from '@prisma/client';
+import { diskStorage } from 'multer';
 import { GamesGetSchema, GamesPutSchema } from './games.dto';
 import { GamesService } from './games.service';
+import { v4 as uuidv4 } from 'uuid';
+import path = require('path');
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Observable, of } from 'rxjs';
+import { join } from 'path';
+
+const storage = {
+  storage: diskStorage({
+    destination: './src/public/gameImages',
+    filename: (req, file, cb) => {
+      const filename: string =
+        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`);
+    },
+  }),
+};
 
 @ApiTags('Games')
 @Controller('games')
@@ -91,6 +116,29 @@ export class GamesController {
     });
   }
 
+  @Get('/:imagename')
+  @ApiResponse({
+    status: 200,
+    description: 'Image of the Game Cover',
+    schema: { example: 'Success' },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found',
+    schema: { example: 'Image Not Found' },
+  })
+  @ApiParam({
+    name: 'imagename',
+    example: '',
+    description:
+      'Name of the image for the Game cover (Please use the image name from games GET request)',
+  })
+  findGameImage(@Param('imagename') imagename, @Res() res): Observable<Object> {
+    return of(
+      res.sendFile(join(process.cwd(), '/src/public/gameImages/' + imagename)),
+    );
+  }
+
   @Post('/')
   @ApiBasicAuth()
   @ApiBody({
@@ -132,6 +180,22 @@ export class GamesController {
       release_date,
       developers,
       platforms,
+    });
+  }
+
+  @UseGuards(AuthGuard('basic'))
+  @Post('/image')
+  @ApiExcludeEndpoint()
+  @UseInterceptors(FileInterceptor('file', storage))
+  uploadImage(
+    @Query('name') name: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Games> {
+    return this.gamesService.updateGame({
+      where: { name: String(name) },
+      data: {
+        image: file.filename,
+      },
     });
   }
 
