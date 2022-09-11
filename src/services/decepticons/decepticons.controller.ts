@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import {
   Body,
   Controller,
@@ -7,19 +8,43 @@ import {
   Post,
   Put,
   Query,
+  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBasicAuth,
   ApiBody,
+  ApiExcludeEndpoint,
+  ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { Decepticons } from '@prisma/client';
+import { diskStorage } from 'multer';
 import { DecepticonPutSchema, DecepticonsGetSchema } from './decepticons.dto';
 import { DecepticonsService } from './decepticons.service';
+import { v4 as uuidv4 } from 'uuid';
+import path = require('path');
+import { Observable, of } from 'rxjs';
+import { join } from 'path';
+
+const storage = {
+  storage: diskStorage({
+    destination: './src/public/decepticonImages',
+    filename: (req, file, cb) => {
+      const filename: string =
+        path.parse(file.originalname).name.replace(/\s/g, '') + uuidv4();
+      const extension: string = path.parse(file.originalname).ext;
+
+      cb(null, `${filename}${extension}`);
+    },
+  }),
+};
 
 @ApiTags('Decepticons')
 @Controller('decepticons')
@@ -87,17 +112,61 @@ export class DecepticonsController {
     @Query('role') role: string,
     @Query('transforms_into') transforms_into: string,
     @Query('description') description: string,
-    @Query('first_appearance_date') first_appearance_date: string,
+    @Query('first_appearance_date') first_appearance_date: any,
     @Query('first_appearance') first_appearance: string,
   ) {
-    return this.decepticonsService.decepticon({
-      name,
-      role,
-      transforms_into,
-      description,
-      first_appearance_date: Number(first_appearance_date),
-      first_appearance,
-    });
+    if (first_appearance_date == String(first_appearance_date)) {
+      return this.decepticonsService.decepticon({
+        name,
+        role,
+        transforms_into,
+        description,
+        first_appearance_date: Number(first_appearance_date),
+        first_appearance,
+      });
+    } else {
+      return this.decepticonsService.decepticon({
+        name,
+        role,
+        transforms_into,
+        description,
+        first_appearance_date,
+        first_appearance,
+      });
+    }
+  }
+
+  @Get('/:imagename')
+  @ApiResponse({
+    status: 200,
+    description: 'Image of the Decepticon',
+    schema: { example: 'Success' },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Not Found',
+    schema: { example: 'Image Not Found' },
+  })
+  @ApiResponse({
+    status: 500,
+    description: 'Server Error',
+    schema: { example: 'Internal Server Error' },
+  })
+  @ApiParam({
+    name: 'imagename',
+    example: '',
+    description:
+      'Name of the image for the Decepticon (Please use the image name from the decepticons GET request)',
+  })
+  findDecepticonImage(
+    @Param('imagename') imagename,
+    @Res() res,
+  ): Observable<Object> {
+    return of(
+      res.sendFile(
+        join(process.cwd(), 'src/public/decepticonImages/' + imagename),
+      ),
+    );
   }
 
   @Post('/')
@@ -153,6 +222,23 @@ export class DecepticonsController {
     });
   }
 
+  @UseGuards(AuthGuard('basic'))
+  @Post('/image')
+  @ApiExcludeEndpoint()
+  @UseInterceptors(FileInterceptor('file', storage))
+  uploadImage(
+    @Query('name') name: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Decepticons> {
+    return this.decepticonsService.updateDecepticon({
+      where: { name: String(name) },
+      data: {
+        image: file.filename,
+      },
+    });
+  }
+
+  @UseGuards(AuthGuard('basic'))
   @Put('/:name')
   @ApiBasicAuth()
   @ApiBody({

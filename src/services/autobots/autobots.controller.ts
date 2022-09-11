@@ -222,6 +222,24 @@ export class AutobotsController {
     });
   }
 
+  @UseGuards(AuthGuard('basic'))
+  @Post('/image')
+  @ApiExcludeEndpoint()
+  @UseInterceptors(FileInterceptor('file', storage))
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  uploadImage(
+    @Query('name') name: string,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Autobots> {
+    console.log(file);
+    return this.autobotService.updateAutobot({
+      where: { name: String(name) },
+      data: {
+        image: file.filename,
+      },
+    });
+  }
+
   @Put('/:name')
   @ApiBasicAuth()
   @ApiBody({
@@ -270,24 +288,6 @@ export class AutobotsController {
         description,
         first_appearance_date,
         first_appearance,
-      },
-    });
-  }
-
-  @UseGuards(AuthGuard('basic'))
-  @Post('/image')
-  @ApiExcludeEndpoint()
-  @UseInterceptors(FileInterceptor('file', storage))
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  uploadImage(
-    @Query('name') name: string,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<Autobots> {
-    console.log(file);
-    return this.autobotService.updateAutobot({
-      where: { name: String(name) },
-      data: {
-        image: file.filename,
       },
     });
   }
